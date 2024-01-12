@@ -23,6 +23,31 @@ app.get('/importProjet', async (req, res) => {
   }
 });
 
+app.get('/AddProjet', async (req, res) => {
+  const db = admin.firestore();
+  try {
+
+    const projetData = {
+      concept: 'nouveau projet',
+      description: 'Lorem Ipsum',
+      id: '4',
+      nom: 'projet bdd',
+      objectifs: 'supprimer element bdd',
+      competences: {
+        "dev": 'true',
+        "design": 'true'
+      }
+        
+    }
+
+    const addBdd = await db.collection('Projet').add(projetData);
+    
+    res.status(200).send('Document ajouté avec succès: ' + addBdd.id);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
