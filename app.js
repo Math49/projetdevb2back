@@ -1,20 +1,30 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const admin = require('./routes/firebaseAdmin'); // Importe le module Firebase que tu viens de créer
+const app = express();
+const port = 3000;
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+app.use(function (req, res, next) {
 
-var app = express();
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3002');
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+  // Pass to next layer of middleware
+  next();
+});
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.get('/data', async (req, res) => {
+  const db = admin.firestore();
+  try {
+    const snapshot = await db.collection('test').get();
+    const data = snapshot.docs.map(doc => doc.data());
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 module.exports = app;
