@@ -12,10 +12,10 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('/data', async (req, res) => {
+app.get('/importProjet', async (req, res) => {
   const db = admin.firestore();
   try {
-    const snapshot = await db.collection('test').get();
+    const snapshot = await db.collection('Projet').get();
     const data = snapshot.docs.map(doc => doc.data());
     res.send(data);
   } catch (error) {
