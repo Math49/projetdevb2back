@@ -20,7 +20,6 @@ app.get('/importProjet', async (req, res) => {
     const data = snapshot.docs.map(doc => {
       return {...doc.data(), uid: doc.id};
     });
-    res.send(data);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -43,8 +42,7 @@ app.put('/addProjet', async (req, res) => {
     }
 
     const docRef = await db.collection('Projet').add(projetData);
-    console.log('Document ajouté avec succès: ', projetData);
-    res.status(200).send('Document ajouté avec succès: ' + projetData);
+    res.status(200).send('Document ajouté avec succès: ' + docRef.id);
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
