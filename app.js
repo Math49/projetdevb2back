@@ -33,7 +33,7 @@ const isAuthenticated = (req, res, next) => {
 
 // Route pour l'inscription
 app.post('/signup', async (req, res) => {
-  const { email, password } = {email:'test1@gmail.com',password:'1234'};
+  const { email, password } = {email:'test1@gmail.com',password:'123456'};
 // req.body
   try {
     const auth = getAuth();
@@ -47,7 +47,7 @@ app.post('/signup', async (req, res) => {
 
 // Route pour la connexion
 app.post('/login', async (req, res) => {
-  const { email, password } = {email:'test1@gmail.com',password:'1234'};
+  const { email, password } = {email:'test1@gmail.com',password:'123456'};
 // req.body
   try {
     const auth = getAuth();
