@@ -17,14 +17,17 @@ app.get('/importProjet', async (req, res) => {
   try {
     const snapshot = await db.collection('Projet').get();
     const data = snapshot.docs.map(doc => doc.data());
+    
     res.send(data);
   } catch (error) {
     res.status(500).send(error);
   }
+  
 });
 
 app.get('/AddProjet', async (req, res) => {
   const db = admin.firestore();
+  
   try {
 
     const projetData = {
