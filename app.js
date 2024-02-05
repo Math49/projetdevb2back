@@ -30,14 +30,13 @@ app.get('/AddProjet', async (req, res) => {
     const projetData = {
       concept: 'nouveau projet',
       description: 'Lorem Ipsum',
-      id: '4',
+      id: 7,
       nom: 'projet bdd',
       objectifs: 'supprimer element bdd',
       competences: {
-        "dev": 'true',
-        "design": 'true'
+        "dev": true,
+        "design": true
       }
-        
     }
 
     const addBdd = await db.collection('Projet').add(projetData);
