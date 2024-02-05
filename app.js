@@ -17,7 +17,6 @@ app.get('/importProjet', async (req, res) => {
   const db = admin.firestore();
   try {
     const snapshot = await db.collection('Projet').get();
-    console.log(snapshot.docs);
     const data = snapshot.docs.map(doc => {
       return {...doc.data(), uid: doc.id};
     });
@@ -30,9 +29,7 @@ app.get('/importProjet', async (req, res) => {
 
 app.put('/addProjet', async (req, res) => {
   const db = admin.firestore();
-  console.log(req);
   const Data = req.body;
-  console.log(Data);
   try {
 
     const projetData = {
