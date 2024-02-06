@@ -38,8 +38,8 @@ app.post('/addData',async (req,res) => {
 
 // Route pour l'inscription
 app.post('/signup', async (req, res) => {
-  const { email, password } = {email:'etudiant5@gmail.com',password:'123456'};
-// req.body 
+  // const { email, password, prenom, nom } = req.body;
+  console.log(req.body);
   try {
     const user = await getAuth().createUser({email, password});
     console.log(user);
@@ -48,9 +48,11 @@ app.post('/signup', async (req, res) => {
 
     usersCollection.doc(uid).set({
       email: email,
+      uid: uid,
+      prenom: prenom,
+      nom: nom,
       roles: 'etudiant',
-      photoURL: 'photoProfil',
-      idprojet: 'jgijeafjbejbroazi',
+      photoURL: 'photoProfil'
     })
     res.status(200).json({ message: 'Signup successful', user });
   } catch (error) {
