@@ -1,8 +1,10 @@
 const express = require('express');
 const admin = require('./routes/firebaseAdmin'); // Importe le module Firebase que tu viens de créer
-const { getAuth, signInWithEmailAndPassword } = require('firebase-admin/auth');
+const { getAuth } = require('firebase-admin/auth');
 const app = express();
 const port = 3000;
+
+const customClaims = {admin: true, personnel: true, etudiant: true};
 
 
 app.use(function (req, res, next) {
@@ -14,6 +16,22 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.post('/addData',async (req,res) => {
+  const uid = 'o9KGa33jmjSTVf1oLK5rCm6TCEi2';
+  const usersCollection = admin.firestore().collection('users');
+
+  usersCollection.doc(uid).set({
+    roles: 'etudiant',
+    photoURL: 'photoProfil',
+    idprojet: 'jgijeafjbejbroazi',
+  })
+  .then(() => {
+    console.log('Informations de l\'utilisateur ajoutées avec succès à Firestore.');
+  })
+  .catch((error) => {
+    console.error('Erreur lors de l\'ajout des informations de l\'utilisateur à Firestore :', error);
+  });
+});
 
 // app.use(express.json());
 
@@ -49,11 +67,11 @@ app.post('/login', async (req, res) => {
 // req.body
   try {
     
-    const userCredential = await getAuth().getUserByEmail(email);
+    const userCredential = await getAuth().getUserByEmail(email)
     const user = userCredential.user;
     res.status(200).json({ message: 'Login successful', user });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid credentials' });
+    res.status(401).json({ error: error.message });
   }
 });
 
@@ -67,6 +85,8 @@ app.post('/logout', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 
 app.listen(port, () => {
