@@ -15,50 +15,36 @@ app.use(
   allowedHeaders: ['Content-Type'], // Autorise ces en-têtes dans les requêtes
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Autorise ces méthodes de requête
 }));
-
-app.post('/addData',async (req,res) => {
-  const uid = 'o9KGa33jmjSTVf1oLK5rCm6TCEi2';
-  const usersCollection = admin.firestore().collection('users');
-
-  usersCollection.doc(uid).set({
-    roles: 'etudiant',
-    photoURL: 'photoProfil',
-    idprojet: 'jgijeafjbejbroazi',
-  })
-  .then(() => {
-    console.log('Informations de l\'utilisateur ajoutées avec succès à Firestore.');
-  })
-  .catch((error) => {
-    console.error('Erreur lors de l\'ajout des informations de l\'utilisateur à Firestore :', error);
-  });
-});
-
 // app.use(express.json());
 
 
 // Route pour l'inscription
 app.post('/signup', async (req, res) => {
-  // const { email, password, prenom, nom } = req.body;
-  console.log(req.body);
+  const { userEmail, userPassword, prenom, nom } = req.body;
+  
   try {
-    const user = await getAuth().createUser({email, password});
-    console.log(user);
+    const user = await getAuth().createUser({
+      email: userEmail, 
+      password: userPassword 
+    });
     const uid = user.uid;
     const usersCollection = admin.firestore().collection('users');
 
     usersCollection.doc(uid).set({
-      email: email,
+      email: userEmail,
       uid: uid,
       prenom: prenom,
       nom: nom,
       roles: 'etudiant',
-      photoURL: 'photoProfil'
-    })
+      photoURL: 'photoProfil' 
+    });
     res.status(200).json({ message: 'Signup successful', user });
   } catch (error) {
+    console.error("Signup error: ", error);
     res.status(400).json({ error: error.message });
   }
 });
+
 
 app.get('/importProjet', async (req, res) => {
   const db = admin.firestore();
