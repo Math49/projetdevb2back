@@ -67,9 +67,6 @@ app.get('/importProjet', async (req, res) => {
     const data = snapshot.docs.map(doc => {
       return {...doc.data(), uid: doc.id};
     });
-    const data = snapshot.docs.map(doc => {
-      return {...doc.data(), uid: doc.id};
-    });
     res.send(data);
   } catch (error) {
     res.status(500).send(error);
