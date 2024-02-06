@@ -40,7 +40,7 @@ app.put('/addProjet', async (req, res) => {
       competences: Data.competences
     }
 
-    const docRef = await db.collection('Projet').add(projetData);
+    const docRef = await db.collection('Projet-Validation').add(projetData);
     res.status(200).send('Document ajouté avec succès: ' + docRef.id);
   } catch (error) {
     console.log(error);
