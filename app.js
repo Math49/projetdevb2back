@@ -38,11 +38,20 @@ app.post('/addData',async (req,res) => {
 
 // Route pour l'inscription
 app.post('/signup', async (req, res) => {
-  const { email, password } = {email:'etudiant2@gmail.com',password:'123456'};
-// req.body
+  const { email, password } = {email:'etudiant5@gmail.com',password:'123456'};
+// req.body 
   try {
     const user = await getAuth().createUser({email, password});
     console.log(user);
+    const uid = user.uid;
+    const usersCollection = admin.firestore().collection('users');
+
+    usersCollection.doc(uid).set({
+      email: email,
+      roles: 'etudiant',
+      photoURL: 'photoProfil',
+      idprojet: 'jgijeafjbejbroazi',
+    })
     res.status(200).json({ message: 'Signup successful', user });
   } catch (error) {
     res.status(400).json({ error: error.message });
