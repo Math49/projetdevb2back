@@ -17,17 +17,6 @@ app.use(function (req, res, next) {
 
 // app.use(express.json());
 
-// Middleware pour vérifier l'authentification de l'utilisateur
-const isAuthenticated = async (req, res, next) => {
-  const idToken = req.headers.authorization;
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.user = decodedToken;
-    next();
-  } catch (error) {
-    res.status(401).send('You are not authorized');
-  }
-};
 
 // Route pour l'inscription
 app.post('/signup', async (req, res) => {
@@ -42,33 +31,19 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-
-// Route pour la connexion
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
+app.get('/importProjet', async (req, res) => {
+  const db = admin.firestore();
   try {
-    const userCredential = await signInWithEmail(getAuth(), email, password);
-    const user = userCredential.user;
-    console.log(user);
-    res.status(200).json({ message: 'Login successful', user });
+    const snapshot = await db.collection('Projet').get();
+    const data = snapshot.docs.map(doc => {
+      return {...doc.data(), uid: doc.id};
+    });
+    res.send(data);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).send(error);
   }
-});
   
-
-// Route pour la déconnexion
-app.post('/logout', isAuthenticated, async (req, res) => {
-  try {
-    const auth = getAuth();
-    await signOut(auth);
-    res.status(200).json({ message: 'Logout successful' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
-
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
