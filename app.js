@@ -45,11 +45,67 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+app.get('/importUser', async (req, res) => {
+  const db = admin.firestore();
+  try {
+    const snapshot = await db.collection('users').get();
+    const data = snapshot.docs.map(doc => {
+      return {...doc.data(), uid: doc.id};
+    });
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+  
+});
+
 
 app.get('/importProjet', async (req, res) => {
   const db = admin.firestore();
   try {
     const snapshot = await db.collection('Projet').get();
+    const data = snapshot.docs.map(doc => {
+      return {...doc.data(), uid: doc.id};
+    });
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+  
+});
+
+app.get('/importProjetValidation', async (req, res) => {
+  const db = admin.firestore();
+  try {
+    const snapshot = await db.collection('Projet-Validation').get();
+    const data = snapshot.docs.map(doc => {
+      return {...doc.data(), uid: doc.id};
+    });
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+  
+});
+
+app.get('/importProjetProgress', async (req, res) => {
+  const db = admin.firestore();
+  try {
+    const snapshot = await db.collection('Projet-Progress').get();
+    const data = snapshot.docs.map(doc => {
+      return {...doc.data(), uid: doc.id};
+    });
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+  
+});
+
+app.get('/importProjetFinished', async (req, res) => {
+  const db = admin.firestore();
+  try {
+    const snapshot = await db.collection('Projet-Finished').get();
     const data = snapshot.docs.map(doc => {
       return {...doc.data(), uid: doc.id};
     });
@@ -80,6 +136,60 @@ app.put('/addProjet', async (req, res) => {
     res.status(500).send(error);
   }
   
+});
+
+app.delete('/valideProjet/:uid', async (req, res) => {
+  const db = admin.firestore();
+  const uid = req.params.uid;
+  try {
+    const projetDoc = await db.collection('Projet-Validation').doc(uid).get();
+    if (!projetDoc.exists) {
+      res.status(404).json({ message: 'Projet not found' });
+    } else {
+      const projetData = projetDoc.data();
+      await db.collection('Projet').doc(uid).set(projetData);
+      await db.collection('Projet-Validation').doc(uid).delete();
+      res.status(200).json({ message: 'Projet deleted and moved to Projet collection' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/progressProjet/:uid', async (req, res) => {
+  const db = admin.firestore();
+  const uid = req.params.uid;
+  try {
+    const projetDoc = await db.collection('Projet').doc(uid).get();
+    if (!projetDoc.exists) {
+      res.status(404).json({ message: 'Projet not found' });
+    } else {
+      const projetData = projetDoc.data();
+      await db.collection('Projet-Progress').doc(uid).set(projetData);
+      await db.collection('Projet').doc(uid).delete();
+      res.status(200).json({ message: 'Projet deleted and moved to Projet collection' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/finishedProjet/:uid', async (req, res) => {
+  const db = admin.firestore();
+  const uid = req.params.uid;
+  try {
+    const projetDoc = await db.collection('Projet-Progress').doc(uid).get();
+    if (!projetDoc.exists) {
+      res.status(404).json({ message: 'Projet not found' });
+    } else {
+      const projetData = projetDoc.data();
+      await db.collection('Projet-Finished').doc(uid).set(projetData);
+      await db.collection('Projet-Progress').doc(uid).delete();
+      res.status(200).json({ message: 'Projet deleted and moved to Projet collection' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.listen(port, () => {
