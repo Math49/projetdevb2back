@@ -18,16 +18,15 @@ app.use(function (req, res, next) {
 // app.use(express.json());
 
 // Middleware pour vérifier l'authentification de l'utilisateur
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = async (req, res, next) => {
   const idToken = req.headers.authorization;
-  admin.auth().verifyIdToken(idToken)
-    .then((decodedToken) => {
-      req.user = decodedToken;
-      next();
-    })
-    .catch((error) => {
-      res.status(401).json({ error: 'Unauthorized' });
-    });
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    res.status(401).send('You are not authorized');
+  }
 };
 
 // Route pour l'inscription
@@ -43,19 +42,21 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+
 // Route pour la connexion
 app.post('/login', async (req, res) => {
-  const { email, password } = {email:'etudiant1@gmail.com',password:'123456'};
-// req.body
+  const { email, password } = req.body;
+
   try {
-    
-    const userCredential = await getAuth().getUserByEmail(email);
+    const userCredential = await signInWithEmail(getAuth(), email, password);
     const user = userCredential.user;
+    console.log(user);
     res.status(200).json({ message: 'Login successful', user });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid credentials' });
+    res.status(400).json({ error: error.message });
   }
 });
+  
 
 // Route pour la déconnexion
 app.post('/logout', isAuthenticated, async (req, res) => {
