@@ -20,7 +20,7 @@ app.use(
 
 // Route pour l'inscription
 app.post('/signup', async (req, res) => {
-  const { userEmail, userPassword, prenom, nom } = req.body;
+  const { userEmail, userPassword, prenom, nom, role } = req.body;
   
   try {
     const user = await getAuth().createUser({
@@ -35,7 +35,7 @@ app.post('/signup', async (req, res) => {
       uid: uid,
       prenom: prenom,
       nom: nom,
-      roles: 'etudiant',
+      roles: role,
       photoURL: 'photoProfil' 
     });
     res.status(200).json({ message: 'Signup successful', user });
