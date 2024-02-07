@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(
   cors({
-  origin: 'http://localhost:3002', // Autorise les requêtes provenant de cette origine
+  origin: ['http://localhost:3002', 'http://localhost:3003'], // Autorise les requêtes provenant de ces origines
   allowedHeaders: ['Content-Type'], // Autorise ces en-têtes dans les requêtes
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Autorise ces méthodes de requête
 }));
